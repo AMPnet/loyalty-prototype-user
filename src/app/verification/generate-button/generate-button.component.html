@@ -1,0 +1,22 @@
+<ng-container *ngIf="(loginState$ | async) === 'LOGGED_IN' && (signingState$ | async) === 'GENERATE_PAYLOAD'">
+  <button class="bg-blue-400 text-white text-2xl py-3 px-6 border-2 border-blue-700 rounded-full
+                 hover:bg-blue-700 flex flex-row items-center gap-2"
+          (click)="generateMessage()">
+    <p class="inline-block">Generate Message</p>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="(loginState$ | async) === 'LOGGED_IN' && (signingState$ | async) === 'SIGN_PAYLOAD'">
+  <div class="flex flex-col justify-center items-center gap-2">
+    <button class="bg-blue-400 text-white text-2xl py-3 px-6 border-2 border-blue-700 rounded-full
+                   hover:bg-blue-700 block w-60"
+            (click)="signMessage()">
+      <p class="inline-block">Sign Message</p>
+    </button>
+    <p class="block w-2/3">Message to sign: {{ (messageToSign$ | async)?.message }}</p>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="(loginState$ | async) === 'LOGGED_IN' && (signingState$ | async) === 'DISPLAY_CODE'">
+  *** QR CODE WILL GO HERE ***
+</ng-container>

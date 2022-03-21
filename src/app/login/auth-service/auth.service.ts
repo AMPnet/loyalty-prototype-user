@@ -1,16 +1,14 @@
 import {ApplicationRef, Injectable} from '@angular/core'
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
+import {fromPromise} from "rxjs/internal-compatibility";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private accountSubject = new BehaviorSubject<string>("Unknown")
-  private loginStateSubject = new BehaviorSubject<LoginState>("METAMASK_MISSING")
-
-  account$ = this.accountSubject.asObservable()
-  loginState$ = this.loginStateSubject.asObservable()
+  account$ = new BehaviorSubject<string>("Unknown")
+  loginState$ = new BehaviorSubject<LoginState>("METAMASK_MISSING")
 
   constructor(private applicationRef: ApplicationRef) {
     (window as any).ethereum.on("accountsChanged", this.updateState.bind(this))
@@ -22,15 +20,25 @@ export class AuthService {
       .then(this.updateState.bind(this))
   }
 
+  signMessage(message: string): Observable<string> {
+    return fromPromise<string>(
+      (window as any).ethereum.request(
+        {
+          method: 'personal_sign',
+          params: [message, this.account$.value]
+        }
+      )
+    )
+  }
+
   private updateState() {
     const ethereum = (window as any).ethereum
-    this.accountSubject.next(ethereum?.selectedAddress || "Unknown")
-    this.loginStateSubject.next(AuthService.determineLoginState())
+    this.account$.next(ethereum?.selectedAddress || "Unknown")
+    this.loginState$.next(AuthService.determineLoginState())
     this.applicationRef.tick()
   }
 
   private static determineLoginState(): LoginState {
-    console.log("determine state")
     const ethereum = (window as any).ethereum
 
     if (!ethereum) {
