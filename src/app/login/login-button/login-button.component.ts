@@ -1,30 +1,21 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {AuthService, LoginState} from "../auth-service/auth.service";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-login-button',
   templateUrl: './login-button.component.html',
-  styleUrls: ['./login-button.component.css']
+  styleUrls: ['./login-button.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginButtonComponent {
 
-  loginState: LoginState
-  account: string | null
+  loginState$: Observable<LoginState>
+  account$: Observable<string | null>
 
   constructor(private authService: AuthService) {
-    this.loginState = this.authService.getState()
-    this.account = this.authService.getAccount()
-    this.authService.addAccountChangeHook(this.updateState.bind(this))
-
-    setTimeout(
-      this.updateState.bind(this),
-      500
-    )
-  }
-
-  updateState() {
-    this.loginState = this.authService.getState()
-    this.account = this.authService.getAccount()
+    this.loginState$ = this.authService.loginState$
+    this.account$ = this.authService.account$
   }
 
   async logIn() {

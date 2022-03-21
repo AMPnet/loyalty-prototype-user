@@ -1,11 +1,11 @@
-<ng-container *ngIf="loginState === 'METAMASK_MISSING'">
+<ng-container *ngIf="(loginState$ | async) === 'METAMASK_MISSING'">
   <button class="bg-blue-400 text-white text-2xl py-1 px-6 border-2 border-blue-700 rounded-full
                  hover:bg-blue-700 flex flex-row items-center gap-2">
     Please install Metamask
   </button>
 </ng-container>
 
-<ng-container *ngIf="loginState === 'LOGGED_OUT'">
+<ng-container *ngIf="(loginState$ | async) === 'LOGGED_OUT'">
   <button class="bg-blue-400 text-white text-2xl py-1 px-6 border-2 border-blue-700 rounded-full
                  hover:bg-blue-700 flex flex-row items-center gap-2"
           (click)="logIn()">
@@ -68,10 +68,10 @@
   </button>
 </ng-container>
 
-<ng-container *ngIf="loginState === 'LOGGED_IN'">
+<ng-container *ngIf="(loginState$ | async) === 'LOGGED_IN'">
   <button class="bg-blue-400 text-white text-xl py-1 px-6 border-2 border-blue-700 rounded-full
                  hover:bg-blue-700 flex flex-row items-center gap-2">
-    <p class="inline-block">Account: {{ account }}</p>
+    <p class="inline-block">Account: {{ account$ | async }}</p>
     <div class="inline-block p-2 lg:p-1">
       <svg class="block" width="32" height="32"
            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

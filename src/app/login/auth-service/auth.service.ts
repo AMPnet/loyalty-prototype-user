@@ -1,11 +1,36 @@
-import {Injectable} from '@angular/core'
+import {ApplicationRef, Injectable} from '@angular/core'
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  getState(): LoginState {
+  private accountSubject = new BehaviorSubject<string>("Unknown")
+  private loginStateSubject = new BehaviorSubject<LoginState>("METAMASK_MISSING")
+
+  account$ = this.accountSubject.asObservable()
+  loginState$ = this.loginStateSubject.asObservable()
+
+  constructor(private applicationRef: ApplicationRef) {
+    (window as any).ethereum.on("accountsChanged", this.updateState.bind(this))
+    this.updateState()
+  }
+
+  async logIn() {
+    await (window as any).ethereum.request({method: 'eth_requestAccounts'})
+      .then(this.updateState.bind(this))
+  }
+
+  private updateState() {
+    const ethereum = (window as any).ethereum
+    this.accountSubject.next(ethereum?.selectedAddress || "Unknown")
+    this.loginStateSubject.next(AuthService.determineLoginState())
+    this.applicationRef.tick()
+  }
+
+  private static determineLoginState(): LoginState {
+    console.log("determine state")
     const ethereum = (window as any).ethereum
 
     if (!ethereum) {
@@ -17,18 +42,6 @@ export class AuthService {
     }
 
     return "LOGGED_IN"
-  }
-
-  addAccountChangeHook(hook: () => void) {
-    (window as any).ethereum.on("accountsChanged", hook)
-  }
-
-  getAccount(): string | null {
-    return (window as any)?.ethereum?.selectedAddress
-  }
-
-  async logIn() {
-    await (window as any).ethereum.request({method: 'eth_requestAccounts'});
   }
 }
 
