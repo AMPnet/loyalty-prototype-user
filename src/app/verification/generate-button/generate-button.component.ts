@@ -15,6 +15,7 @@ export class GenerateButtonComponent {
   loginState$: Observable<LoginState>
   signingState$: BehaviorSubject<SigningState>
   messageToSign$: BehaviorSubject<GenerateMessageResponse | null>
+  qrCodePayload: string
 
   constructor(private authService: AuthService,
               private httpClient: HttpClient,
@@ -23,6 +24,7 @@ export class GenerateButtonComponent {
     this.signingState$ = new BehaviorSubject<SigningState>("GENERATE_PAYLOAD")
     this.messageToSign$ = new BehaviorSubject<GenerateMessageResponse | null>(null)
     this.authService.account$.subscribe(() => this.signingState$.next("GENERATE_PAYLOAD"))
+    this.qrCodePayload = ""
   }
 
   generateMessage() {
@@ -46,7 +48,10 @@ export class GenerateButtonComponent {
     if (messageToSign !== null) {
       this.authService.signMessage(messageToSign.message).pipe(
         switchMap(signature => this.verifySignature(messageToSign.id, signature))
-      ).subscribe((resp) => this.signingState$.next("DISPLAY_CODE"))
+      ).subscribe((resp) => {
+        this.signingState$.next("DISPLAY_CODE")
+        this.qrCodePayload = JSON.stringify(resp)
+      })
     }
   }
 

@@ -18,5 +18,5 @@
 </ng-container>
 
 <ng-container *ngIf="(loginState$ | async) === 'LOGGED_IN' && (signingState$ | async) === 'DISPLAY_CODE'">
-  *** QR CODE WILL GO HERE ***
+  <qr-code [value]="qrCodePayload" [size]="512"></qr-code>
 </ng-container>
