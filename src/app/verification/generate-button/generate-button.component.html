@@ -18,5 +18,8 @@
 </ng-container>
 
 <ng-container *ngIf="(loginState$ | async) === 'LOGGED_IN' && (signingState$ | async) === 'DISPLAY_CODE'">
-  <qr-code [value]="qrCodePayload" [size]="512"></qr-code>
+  <div class="flex flex-col items-center gap-5">
+    <p class="text-4xl">Remaining time: {{ remainingTime$ | async }}</p>
+    <qr-code [value]="signedPayload | json" [size]="375"></qr-code>
+  </div>
 </ng-container>
