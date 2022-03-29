@@ -60,7 +60,7 @@ export class GenerateButtonComponent implements OnInit {
   generateMessage() {
     const account = this.authService.account$.value
     const response = this.httpClient.post<GenerateMessageResponse>(
-      `http://localhost:8080/verification/generate/${account}`,
+      `https://eth-staging.ampnet.io/api/blockchain-api/verification/generate/${account}`,
       null,
       {responseType: 'json'}
     )
@@ -88,7 +88,7 @@ export class GenerateButtonComponent implements OnInit {
 
   private verifySignature(messageId: string, signature: string): Observable<VerifySignedMessageResponse> {
     return this.httpClient.post<VerifySignedMessageResponse>(
-      `http://localhost:8080/verification/signature/${messageId}`,
+      `https://eth-staging.ampnet.io/api/blockchain-api/verification/signature/${messageId}`,
       {signature: signature},
       {responseType: 'json'}
     )
